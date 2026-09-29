@@ -25,7 +25,7 @@ try {
   // No .grok/app-env.json (local dev without platform injection) — that's fine.
 }
 
-const viteArgs = process.argv.slice(2);
+const viteArgs = process.argv.slice(3);
 const result = spawnSync("vite", viteArgs, {
   cwd: root,
   stdio: "inherit",
