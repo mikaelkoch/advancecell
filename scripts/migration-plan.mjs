@@ -3,7 +3,7 @@
  * Returns the list of migration files that still need to be applied.
  * The SQL files live in `migrations/*.sql` and are bundled at build time.
  */
-export function pendingMigrations(available: string[], done: string[]): Array<{ name: string; path: string }> {
+export function pendingMigrations(available, done) {
   const doneSet = new Set(done);
   return available
     .filter((name) => !doneSet.has(name))
