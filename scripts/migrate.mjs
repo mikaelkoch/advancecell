@@ -65,10 +65,9 @@ async function main() {
     throw e;
   }
 
-  try {
-    const doneRows = await pool.query("SELECT name FROM _migrations");
-    console.log("[migrate] Existing migrations:", doneRows.rows.map(r => r.name).join(', ') || 'none');
-    const done = new Set(doneRows.rows.map((r) => r.name));
+  const doneRows = await pool.query("SELECT name FROM _migrations");
+  console.log("[migrate] Existing migrations:", doneRows.rows.map(r => r.name).join(', ') || 'none');
+  const done = new Set(doneRows.rows.map((r) => r.name));
 
   const files = globSync("migrations/*.sql", { cwd: root, absolute: true })
     .sort((a, b) => a.localeCompare(b));
