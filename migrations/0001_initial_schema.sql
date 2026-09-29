@@ -1,6 +1,17 @@
 -- Initial schema for Advancecell
 -- This migration creates all core tables for the application
 
+-- Create sequences FIRST (before tables that reference them)
+-- Service Orders sequence
+DO $$ BEGIN
+    CREATE SEQUENCE IF NOT EXISTS service_orders_order_number_seq;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- Cash Registers sequence
+DO $$ BEGIN
+    CREATE SEQUENCE IF NOT EXISTS cash_registers_session_number_seq;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -93,11 +104,6 @@ CREATE TABLE IF NOT EXISTS service_orders (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Create sequence for order_number if not exists
-DO $$ BEGIN
-    CREATE SEQUENCE IF NOT EXISTS service_orders_order_number_seq;
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
 -- Service Order Items (products used in service)
 CREATE TABLE IF NOT EXISTS service_order_items (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -139,10 +145,6 @@ CREATE TABLE IF NOT EXISTS cash_registers (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-DO $$ BEGIN
-    CREATE SEQUENCE IF NOT EXISTS cash_registers_session_number_seq;
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
 -- Cash Movements table
 CREATE TABLE IF NOT EXISTS cash_movements (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -155,10 +157,6 @@ CREATE TABLE IF NOT EXISTS cash_movements (
     created_by TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-DO $$ BEGIN
-    CREATE SEQUENCE IF NOT EXISTS cash_registers_session_number_seq;
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- WhatsApp Settings
 CREATE TABLE IF NOT EXISTS whatsapp_settings (
