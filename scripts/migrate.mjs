@@ -22,44 +22,92 @@ types.setTypeParser(OID_DATE, identity);
 types.setTypeParser(OID_INTERVAL, identity);
 
 const databaseUrl = process.env.DATABASE_URL?.trim();
+
+// Diagnostic logging (no secrets)
+console.log("[migrate] DATABASE_URL exists:", !!databaseUrl);
+if (databaseUrl) {
+  try {
+    const url = new URL(databaseUrl);
+    console.log("[migrate] protocol:", url.protocol);
+    console.log("[migrate] hostname:", url.hostname?.replace(/./g, '*') || 'unknown');
+    console.log("[migrate] port:", url.port || 'default');
+    console.log("[migrate] database:", url.pathname?.slice(1) || 'unknown');
+    console.log("[migrate] search params:", url.search?.slice(0, 100) || 'none');
+  } catch (e) {
+    console.log("[migrate] DATABASE_URL parse failed:", e.message);
+  }
+}
+
 if (!databaseUrl) {
   console.error("DATABASE_URL not set — cannot run migrations");
   process.exit(1);
 }
 
+console.log("[migrate] Creating connection pool...");
 const pool = new Pool({ connectionString: databaseUrl });
 
-async function main() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS _migrations (
-      name TEXT PRIMARY KEY,
-      applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
+pool.on('error', (err) => {
+  console.error("[migrate] Unexpected pool error:", err.message);
+});
 
-  const doneRows = await pool.query("SELECT name FROM _migrations");
-  const done = new Set(doneRows.rows.map((r) => r.name));
+async function main() {
+  console.log("[migrate] Testing connection...");
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS _migrations (
+        name TEXT PRIMARY KEY,
+        applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    console.log("[migrate] _migrations table ready");
+  } catch (e) {
+    console.error("[migrate] Failed to create _migrations table:", e.message);
+    throw e;
+  }
+
+  try {
+    const doneRows = await pool.query("SELECT name FROM _migrations");
+    console.log("[migrate] Existing migrations:", doneRows.rows.map(r => r.name).join(', ') || 'none');
+    const done = new Set(doneRows.rows.map((r) => r.name));
 
   const files = globSync("migrations/*.sql", { cwd: root, absolute: true })
     .sort((a, b) => a.localeCompare(b));
 
   for (const file of files) {
     const name = file.split(/[\\/]/).pop();
-    if (name.startsWith("0001_") === false) continue; // only run 0001_ for now
-    if (done.has(name)) continue;
+    if (name.startsWith("0001_") === false) {
+      console.log(`[migrate] Skipping ${name} (not 0001_)`);
+      continue;
+    }
+    if (done.has(name)) {
+      console.log(`[migrate] Skipping ${name} (already applied)`);
+      continue;
+    }
 
+    console.log(`[migrate] Reading migration file: ${name}`);
     const sql = readFileSync(file, "utf-8");
-    console.log(`Applying migration: ${name}`);
-    await pool.query(sql);
-    await pool.query("INSERT INTO _migrations (name) VALUES ($1)", [name]);
-    console.log(`Applied: ${name}`);
+    console.log(`[migrate] Applying migration: ${name}`);
+    try {
+      await pool.query(sql);
+      await pool.query("INSERT INTO _migrations (name) VALUES ($1)", [name]);
+      console.log(`[migrate] Applied: ${name}`);
+    } catch (e) {
+      console.error(`[migrate] Failed to apply ${name}:`, e.message);
+      throw e;
+    }
   }
 
+  console.log("[migrate] Closing pool...");
   await pool.end();
   console.log("Migrations complete");
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error("[migrate] FATAL ERROR:");
+  console.error("  message:", err.message);
+  console.error("  code:", err.code);
+  console.error("  errno:", err.errno);
+  console.error("  syscall:", err.syscall);
+  console.error("  stack:", err.stack);
   process.exit(1);
 });
