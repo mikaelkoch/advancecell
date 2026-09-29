@@ -156,6 +156,7 @@ export default defineConfig(({ command, isPreview }) => {
     tsconfigPaths: true,
     alias: {
       "@": resolve(__dirname, "src"),
+      "@/*": resolve(__dirname, "src/*"),
     },
   },
     plugins: [
