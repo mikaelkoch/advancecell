@@ -153,10 +153,10 @@ export default defineConfig(({ command, isPreview }) => {
       strictPort: true,
     },
     resolve: { 
-    // tsconfigPaths: true,
+    tsconfigPaths: true,
     alias: {
-      "@": "/app/src",
-      "@/*": "/app/src/*",
+      "@": resolve(__dirname, "src"),
+      "@/*": resolve(__dirname, "src/*"),
     },
   },
     plugins: [
@@ -172,8 +172,7 @@ export default defineConfig(({ command, isPreview }) => {
       ...(command === "build" || isPreview
         ? [
             nitro({
-              preset: "vercel",
-              serverDir: "./server",
+              preset: "node-server",
             }),
           ]
         : []),
