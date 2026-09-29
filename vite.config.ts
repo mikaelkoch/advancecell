@@ -1,5 +1,5 @@
 import { readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -152,7 +152,12 @@ export default defineConfig(({ command, isPreview }) => {
       port: 8081,
       strictPort: true,
     },
-    resolve: { tsconfigPaths: true },
+    resolve: { 
+    tsconfigPaths: true,
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
     plugins: [
       pgliteBootstrapPlugin(),
       // Before tanstackStart so /auth/popup never falls through to the SPA.
