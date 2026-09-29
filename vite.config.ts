@@ -153,10 +153,10 @@ export default defineConfig(({ command, isPreview }) => {
       strictPort: true,
     },
     resolve: { 
-    tsconfigPaths: true,
+    // tsconfigPaths: true,
     alias: {
-      "@": resolve(__dirname, "src"),
-      "@/*": resolve(__dirname, "src/*"),
+      "@": "/app/src",
+      "@/*": "/app/src/*",
     },
   },
     plugins: [
