@@ -165,12 +165,10 @@ export default defineConfig(({ command, isPreview }) => {
       tanstackStart(),
       ...(command === "build" || isPreview
         ? [
-            import("nitro").then(({ nitro }) =>
-              nitro({
-                preset: "vercel",
-                serverDir: "./server",
-              })
-            ),
+            nitro({
+              preset: "vercel",
+              serverDir: "./server",
+            }),
           ]
         : []),
       viteReact(),
