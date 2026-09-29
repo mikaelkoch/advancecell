@@ -1,0 +1,6 @@
+{
+  "VITE_AUTH_ENABLED": "true",
+  "GROK_AUTH_ISSUER": "https://auth.grok.me",
+  "GROK_AUTH_CLIENT_ID": "grok_preview",
+  "GROK_AUTH_CLIENT_SECRET": "preview_secret"
+}
