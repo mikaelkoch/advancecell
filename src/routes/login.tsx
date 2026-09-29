@@ -2,7 +2,7 @@ import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { GROK_PROVIDERS, authEnabled, signIn, authClient } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Input, Label, Field } from "@/components/ui/field";
 
 export const Route = createFileRoute("/login")({ component: Login });
