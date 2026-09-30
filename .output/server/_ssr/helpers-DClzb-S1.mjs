@@ -1,0 +1,29 @@
+import { r as getSql } from "./db-Ckqzrj8i.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/helpers-DClzb-S1.js
+function nid() {
+	return crypto.randomUUID();
+}
+function num(value) {
+	if (value == null || value === "") return 0;
+	const n = typeof value === "number" ? value : Number(value);
+	return Number.isFinite(n) ? n : 0;
+}
+function iso(value) {
+	if (value == null || value === "") return null;
+	if (value instanceof Date) return value.toISOString();
+	return String(value);
+}
+async function sql() {
+	return getSql();
+}
+async function nextOrderNumber(db, userId) {
+	return ((await db.query(`select coalesce(max(order_number), 0)::int as n from service_orders where user_id = $1`, [userId]))[0]?.n ?? 0) + 1;
+}
+async function nextSessionNumber(db, userId) {
+	return ((await db.query(`select coalesce(max(session_number), 0)::int as n from cash_registers where user_id = $1`, [userId]))[0]?.n ?? 0) + 1;
+}
+function fail(message) {
+	throw new Error(message);
+}
+//#endregion
+export { nid as a, nextSessionNumber as i, iso as n, num as o, nextOrderNumber as r, sql as s, fail as t };

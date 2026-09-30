@@ -1,0 +1,162 @@
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-cebJu_G2.js
+var tsrStartManifest = () => ({ routes: {
+	__root__: {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/__root.tsx",
+		children: [
+			"/_app",
+			"/login",
+			"/api/auth/$"
+		],
+		preloads: [
+			"/assets/index-DUlv6bLD.js",
+			"/assets/react-DB-4Zxce.js",
+			"/assets/preload-helper-BNXly6Dz.js",
+			"/assets/link-tc0J8fvp.js",
+			"/assets/useMatch-DTtj19sj.js",
+			"/assets/jsx-runtime-BtH0gOTJ.js",
+			"/assets/useRouter-DTQ3YH1D.js",
+			"/assets/createLucideIcon-BG7u4oKA.js"
+		],
+		scripts: [{ attrs: {
+			type: "module",
+			async: !0,
+			src: "/assets/index-DUlv6bLD.js"
+		} }]
+	},
+	"/_app": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app.tsx",
+		children: [
+			"/_app/caixa",
+			"/_app/categorias",
+			"/_app/clientes",
+			"/_app/ordens",
+			"/_app/produtos",
+			"/_app/relatorios",
+			"/_app/servicos",
+			"/_app/whatsapp",
+			"/_app/"
+		],
+		preloads: [
+			"/assets/_app-DpfBJQiz.js",
+			"/assets/wrench-EI1NaF8Y.js",
+			"/assets/x-Or4oqxn7.js",
+			"/assets/utils-CJ-IU17c.js",
+			"/assets/client-bLCk0icn.js",
+			"/assets/use-current-user-Coq4jsGU.js",
+			"/assets/catalog-DzEotTpn.js",
+			"/assets/button-u8Bbsdx6.js"
+		]
+	},
+	"/login": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/login.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/login-DLQQ-Wl0.js",
+			"/assets/client-bLCk0icn.js",
+			"/assets/use-current-user-Coq4jsGU.js"
+		]
+	},
+	"/_app/caixa": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/caixa.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/caixa-Dac6RbNk.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/dialog-DUjZvMZx.js",
+			"/assets/field-CJpW6mEl.js",
+			"/assets/domain-n6wrKrVD.js"
+		]
+	},
+	"/_app/categorias": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/categorias.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/categorias-B01FabUg.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/dialog-DUjZvMZx.js",
+			"/assets/field-CJpW6mEl.js"
+		]
+	},
+	"/_app/clientes": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/clientes.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/clientes-CejiVaiw.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/dialog-DUjZvMZx.js",
+			"/assets/field-CJpW6mEl.js"
+		]
+	},
+	"/_app/ordens": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/ordens.tsx",
+		children: ["/_app/ordens/$id/imprimir"],
+		preloads: [
+			"/assets/ordens-BA3tMh_O.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/dialog-DUjZvMZx.js",
+			"/assets/field-CJpW6mEl.js",
+			"/assets/domain-n6wrKrVD.js",
+			"/assets/status-badge-BK4Kirw8.js",
+			"/assets/orders-D-KkGivG.js"
+		]
+	},
+	"/_app/produtos": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/produtos.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/produtos-DVvFuZaM.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/dialog-DUjZvMZx.js",
+			"/assets/field-CJpW6mEl.js"
+		]
+	},
+	"/_app/relatorios": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/relatorios.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/relatorios-CeI7hnZy.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/field-CJpW6mEl.js",
+			"/assets/insights-BjlssQ2J.js"
+		]
+	},
+	"/_app/servicos": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/servicos.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/servicos-Di-caDFg.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/dialog-DUjZvMZx.js",
+			"/assets/field-CJpW6mEl.js"
+		]
+	},
+	"/_app/whatsapp": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/whatsapp.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/whatsapp-CaZh4oUi.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/field-CJpW6mEl.js",
+			"/assets/domain-n6wrKrVD.js",
+			"/assets/orders-D-KkGivG.js"
+		]
+	},
+	"/_app/": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/index.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/_app-B5HvbFdW.js",
+			"/assets/page-header-BzgiZqTS.js",
+			"/assets/insights-BjlssQ2J.js",
+			"/assets/status-badge-BK4Kirw8.js",
+			"/assets/orders-D-KkGivG.js"
+		]
+	},
+	"/_app/ordens/$id/imprimir": {
+		filePath: "C:/Users/schwe/Downloads/SIte AdvanceCell/src/routes/_app/ordens.$id.imprimir.tsx",
+		children: void 0,
+		preloads: ["/assets/ordens._id.imprimir-Bj8nY-ml.js"]
+	}
+} });
+//#endregion
+export { tsrStartManifest };

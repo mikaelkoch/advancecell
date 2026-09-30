@@ -1,0 +1,728 @@
+import { o as __toESM } from "../_runtime.mjs";
+import { Z as require_react, w as require_jsx_runtime, x as Link } from "../_libs/@tanstack/react-router+[...].mjs";
+import { i as formatDate, r as formatCurrency } from "./utils-CdnLhQ9B.mjs";
+import { t as PageHeader } from "./page-header-DJhAiFIL.mjs";
+import { a as STATUS_LABELS, i as STATUS_FLOW, r as PAYMENT_METHODS } from "./domain-y13u448F.mjs";
+import { t as StatusBadge } from "./status-badge-_-KxaRT6.mjs";
+import { a as saveOrder, i as listOrders, n as deleteOrder, t as changeOrderStatus } from "./orders-DmG7RgXZ.mjs";
+import { c as listProducts, l as listServiceTypes, s as listClients } from "./catalog-B_-rBXw1.mjs";
+import { t as Button } from "./button-P70Ng_DC.mjs";
+import { t as Dialog } from "./dialog-zoDB_X19.mjs";
+import { i as Textarea, n as Input, r as Select, t as Field } from "./field-DA7_JQDB.mjs";
+import { n as toast } from "../_libs/sonner.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/ordens-Cc1eJrMf.js
+var import_react = /* @__PURE__ */ __toESM(require_react());
+var import_jsx_runtime = require_jsx_runtime();
+var emptyForm = {
+	clientId: "",
+	deviceBrand: "",
+	deviceModel: "",
+	deviceSerial: "",
+	deviceImei: "",
+	defectDesc: "",
+	accessories: "",
+	diagnosis: "",
+	solution: "",
+	technician: "",
+	warrantyDays: "90",
+	discount: "0",
+	paidAmount: "0",
+	paymentMethod: "",
+	notes: "",
+	estimatedDate: "",
+	items: [],
+	services: []
+};
+function Page() {
+	const [orders, setOrders] = (0, import_react.useState)([]);
+	const [clients, setClients] = (0, import_react.useState)([]);
+	const [products, setProducts] = (0, import_react.useState)([]);
+	const [types, setTypes] = (0, import_react.useState)([]);
+	const [status, setStatus] = (0, import_react.useState)("all");
+	const [q, setQ] = (0, import_react.useState)("");
+	const [open, setOpen] = (0, import_react.useState)(false);
+	const [editing, setEditing] = (0, import_react.useState)(null);
+	const [form, setForm] = (0, import_react.useState)(emptyForm);
+	const [busy, setBusy] = (0, import_react.useState)(false);
+	const load = () => Promise.all([
+		listOrders(),
+		listClients(),
+		listProducts(),
+		listServiceTypes()
+	]).then(([o, c, p, t]) => {
+		setOrders(o);
+		setClients(c);
+		setProducts(p);
+		setTypes(t);
+	}).catch(() => toast.error("Não foi possível carregar as ordens."));
+	(0, import_react.useEffect)(() => {
+		load();
+	}, []);
+	const start = (row) => {
+		setEditing(row ?? null);
+		setForm(row ? {
+			clientId: row.clientId,
+			deviceBrand: row.deviceBrand,
+			deviceModel: row.deviceModel,
+			deviceSerial: row.deviceSerial ?? "",
+			deviceImei: row.deviceImei ?? "",
+			defectDesc: row.defectDesc,
+			accessories: row.accessories ?? "",
+			diagnosis: row.diagnosis ?? "",
+			solution: row.solution ?? "",
+			technician: row.technician ?? "",
+			warrantyDays: String(row.warrantyDays),
+			discount: String(row.discount),
+			paidAmount: String(row.paidAmount),
+			paymentMethod: row.paymentMethod ?? "",
+			notes: row.notes ?? "",
+			estimatedDate: row.estimatedDate ? row.estimatedDate.slice(0, 10) : "",
+			items: row.items.map((i) => ({
+				productId: i.productId,
+				quantity: i.quantity,
+				unitPrice: String(i.unitPrice)
+			})),
+			services: row.services.map((s) => ({
+				serviceTypeId: s.serviceTypeId,
+				quantity: s.quantity,
+				unitPrice: String(s.unitPrice),
+				notes: s.notes ?? ""
+			}))
+		} : {
+			...emptyForm,
+			clientId: clients[0]?.id ?? ""
+		});
+		setOpen(true);
+	};
+	const totals = (0, import_react.useMemo)(() => {
+		const parts = form.items.reduce((s, i) => s + i.quantity * Number(i.unitPrice || 0), 0);
+		const labor = form.services.reduce((s, i) => s + i.quantity * Number(i.unitPrice || 0), 0);
+		const discount = Number(form.discount || 0);
+		return {
+			parts,
+			labor,
+			total: parts + labor - discount
+		};
+	}, [form]);
+	const filtered = orders.filter((o) => {
+		if (status !== "all" && o.status !== status) return false;
+		if (!q) return true;
+		return `${o.orderNumber} ${o.clientName} ${o.deviceBrand} ${o.deviceModel}`.toLowerCase().includes(q.toLowerCase());
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageHeader, {
+			title: "Ordens de serviço",
+			description: "Da entrada na bancada até a entrega.",
+			actions: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				onClick: () => start(),
+				children: "Nova OS"
+			})
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "mb-4 flex flex-col gap-3 sm:flex-row",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+				className: "max-w-sm",
+				placeholder: "Buscar OS, cliente ou aparelho",
+				value: q,
+				onChange: (e) => setQ(e.target.value)
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
+				className: "max-w-xs",
+				value: status,
+				onChange: (e) => setStatus(e.target.value),
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+					value: "all",
+					children: "Todos os status"
+				}), Object.entries(STATUS_LABELS).map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+					value: k,
+					children: v
+				}, k))]
+			})]
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-surface",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
+				className: "w-full min-w-[48rem] text-left text-sm",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", {
+					className: "border-b border-line text-muted",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+							className: "px-4 py-3 font-medium",
+							children: "OS"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+							className: "px-4 py-3 font-medium",
+							children: "Cliente"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+							className: "px-4 py-3 font-medium",
+							children: "Aparelho"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+							className: "px-4 py-3 font-medium",
+							children: "Status"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+							className: "px-4 py-3 font-medium",
+							children: "Total"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+							className: "px-4 py-3 font-medium",
+							children: "Pago"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "px-4 py-3 font-medium" })
+					] })
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [filtered.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
+					className: "border-t border-line align-top",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", {
+							className: "px-4 py-3",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+								className: "font-medium tabular-nums",
+								children: ["#", o.orderNumber]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-xs text-muted",
+								children: formatDate(o.createdAt)
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+							className: "px-4 py-3",
+							children: o.clientName
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", {
+							className: "px-4 py-3",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
+								o.deviceBrand,
+								" ",
+								o.deviceModel
+							] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-muted",
+								children: o.defectDesc
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", {
+							className: "px-4 py-3",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusBadge, { status: o.status }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "mt-2 flex flex-wrap gap-1",
+								children: STATUS_FLOW[o.status].map((next) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "rounded-full border border-line px-2 py-0.5 text-[11px] text-muted hover:text-ink",
+									onClick: async () => {
+										try {
+											await changeOrderStatus({ data: {
+												id: o.id,
+												status: next
+											} });
+											toast.success(`OS #${o.orderNumber} → ${STATUS_LABELS[next]}`);
+											load();
+										} catch (e) {
+											toast.error(e instanceof Error ? e.message : "Erro");
+										}
+									},
+									children: STATUS_LABELS[next]
+								}, next))
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+							className: "px-4 py-3 tabular-nums",
+							children: formatCurrency(o.totalPrice)
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+							className: "px-4 py-3 tabular-nums",
+							children: formatCurrency(o.paidAmount)
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", {
+							className: "px-4 py-3 text-right",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+									to: "/ordens/$id/imprimir",
+									params: { id: o.id },
+									className: "mr-2 text-sm text-accent hover:underline",
+									children: "Imprimir"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => start(o),
+									children: "Editar"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									variant: "ghost",
+									size: "sm",
+									className: "text-danger",
+									onClick: async () => {
+										try {
+											await deleteOrder({ data: { id: o.id } });
+											toast.success("OS removida");
+											load();
+										} catch (e) {
+											toast.error(e instanceof Error ? e.message : "Erro");
+										}
+									},
+									children: "Apagar"
+								})
+							]
+						})
+					]
+				}, o.id)), filtered.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+					colSpan: 7,
+					className: "px-4 py-10 text-center text-muted",
+					children: "Nenhuma ordem encontrada."
+				}) }) : null] })]
+			})
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
+			open,
+			onClose: () => setOpen(false),
+			title: editing ? `Editar OS #${editing.orderNumber}` : "Nova ordem de serviço",
+			wide: true,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+				className: "space-y-5",
+				onSubmit: async (e) => {
+					e.preventDefault();
+					setBusy(true);
+					try {
+						await saveOrder({ data: {
+							id: editing?.id,
+							clientId: form.clientId,
+							deviceBrand: form.deviceBrand,
+							deviceModel: form.deviceModel,
+							deviceSerial: form.deviceSerial,
+							deviceImei: form.deviceImei,
+							defectDesc: form.defectDesc,
+							accessories: form.accessories,
+							diagnosis: form.diagnosis,
+							solution: form.solution,
+							technician: form.technician,
+							warrantyDays: Number(form.warrantyDays),
+							discount: Number(form.discount || 0),
+							paidAmount: Number(form.paidAmount || 0),
+							paymentMethod: form.paymentMethod,
+							notes: form.notes,
+							estimatedDate: form.estimatedDate,
+							items: form.items.map((i) => ({
+								productId: i.productId,
+								quantity: i.quantity,
+								unitPrice: Number(i.unitPrice || 0)
+							})),
+							services: form.services.map((s) => ({
+								serviceTypeId: s.serviceTypeId,
+								quantity: s.quantity,
+								unitPrice: Number(s.unitPrice || 0),
+								notes: s.notes
+							}))
+						} });
+						toast.success(editing ? "OS atualizada" : "OS criada e aviso enviado");
+						setOpen(false);
+						load();
+					} catch (err) {
+						toast.error(err instanceof Error ? err.message : "Erro");
+					} finally {
+						setBusy(false);
+					}
+				},
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "grid gap-4 sm:grid-cols-2",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Cliente",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
+									value: form.clientId,
+									onChange: (e) => setForm({
+										...form,
+										clientId: e.target.value
+									}),
+									required: true,
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: "",
+										children: "Selecione"
+									}), clients.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: c.id,
+										children: c.name
+									}, c.id))]
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Técnico",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.technician,
+									onChange: (e) => setForm({
+										...form,
+										technician: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Marca",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.deviceBrand,
+									onChange: (e) => setForm({
+										...form,
+										deviceBrand: e.target.value
+									}),
+									required: true
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Modelo",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.deviceModel,
+									onChange: (e) => setForm({
+										...form,
+										deviceModel: e.target.value
+									}),
+									required: true
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Serial",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.deviceSerial,
+									onChange: (e) => setForm({
+										...form,
+										deviceSerial: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "IMEI",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.deviceImei,
+									onChange: (e) => setForm({
+										...form,
+										deviceImei: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Defeito relatado",
+								className: "sm:col-span-2",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
+									value: form.defectDesc,
+									onChange: (e) => setForm({
+										...form,
+										defectDesc: e.target.value
+									}),
+									required: true
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Acessórios",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.accessories,
+									onChange: (e) => setForm({
+										...form,
+										accessories: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Previsão",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "date",
+									value: form.estimatedDate,
+									onChange: (e) => setForm({
+										...form,
+										estimatedDate: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Diagnóstico",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
+									value: form.diagnosis,
+									onChange: (e) => setForm({
+										...form,
+										diagnosis: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Solução",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
+									value: form.solution,
+									onChange: (e) => setForm({
+										...form,
+										solution: e.target.value
+									})
+								})
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "mb-2 flex items-center justify-between",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							className: "text-sm font-medium",
+							children: "Serviços"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "secondary",
+							size: "sm",
+							onClick: () => setForm({
+								...form,
+								services: [...form.services, {
+									serviceTypeId: types[0]?.id ?? "",
+									quantity: 1,
+									unitPrice: String(types[0]?.price ?? 0),
+									notes: ""
+								}]
+							}),
+							children: "Adicionar"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "space-y-2",
+						children: form.services.map((line, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "grid grid-cols-[1fr_4.5rem_7rem_auto] gap-2",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
+									value: line.serviceTypeId,
+									onChange: (e) => {
+										const t = types.find((x) => x.id === e.target.value);
+										const next = [...form.services];
+										next[idx] = {
+											...line,
+											serviceTypeId: e.target.value,
+											unitPrice: String(t?.price ?? line.unitPrice)
+										};
+										setForm({
+											...form,
+											services: next
+										});
+									},
+									children: types.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: t.id,
+										children: t.name
+									}, t.id))
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									min: 1,
+									value: line.quantity,
+									onChange: (e) => {
+										const next = [...form.services];
+										next[idx] = {
+											...line,
+											quantity: Number(e.target.value)
+										};
+										setForm({
+											...form,
+											services: next
+										});
+									}
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									step: "0.01",
+									value: line.unitPrice,
+									onChange: (e) => {
+										const next = [...form.services];
+										next[idx] = {
+											...line,
+											unitPrice: e.target.value
+										};
+										setForm({
+											...form,
+											services: next
+										});
+									}
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => setForm({
+										...form,
+										services: form.services.filter((_, i) => i !== idx)
+									}),
+									children: "×"
+								})
+							]
+						}, idx))
+					})] }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "mb-2 flex items-center justify-between",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							className: "text-sm font-medium",
+							children: "Peças"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "secondary",
+							size: "sm",
+							onClick: () => setForm({
+								...form,
+								items: [...form.items, {
+									productId: products[0]?.id ?? "",
+									quantity: 1,
+									unitPrice: String(products[0]?.price ?? 0)
+								}]
+							}),
+							children: "Adicionar"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "space-y-2",
+						children: form.items.map((line, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "grid grid-cols-[1fr_4.5rem_7rem_auto] gap-2",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
+									value: line.productId,
+									onChange: (e) => {
+										const p = products.find((x) => x.id === e.target.value);
+										const next = [...form.items];
+										next[idx] = {
+											...line,
+											productId: e.target.value,
+											unitPrice: String(p?.price ?? line.unitPrice)
+										};
+										setForm({
+											...form,
+											items: next
+										});
+									},
+									children: products.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: p.id,
+										children: p.name
+									}, p.id))
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									min: 1,
+									value: line.quantity,
+									onChange: (e) => {
+										const next = [...form.items];
+										next[idx] = {
+											...line,
+											quantity: Number(e.target.value)
+										};
+										setForm({
+											...form,
+											items: next
+										});
+									}
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									step: "0.01",
+									value: line.unitPrice,
+									onChange: (e) => {
+										const next = [...form.items];
+										next[idx] = {
+											...line,
+											unitPrice: e.target.value
+										};
+										setForm({
+											...form,
+											items: next
+										});
+									}
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => setForm({
+										...form,
+										items: form.items.filter((_, i) => i !== idx)
+									}),
+									children: "×"
+								})
+							]
+						}, idx))
+					})] }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "grid gap-4 sm:grid-cols-3",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Desconto",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									step: "0.01",
+									value: form.discount,
+									onChange: (e) => setForm({
+										...form,
+										discount: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Pago",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									step: "0.01",
+									value: form.paidAmount,
+									onChange: (e) => setForm({
+										...form,
+										paidAmount: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Pagamento",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
+									value: form.paymentMethod,
+									onChange: (e) => setForm({
+										...form,
+										paymentMethod: e.target.value
+									}),
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: "",
+										children: "Selecione"
+									}), PAYMENT_METHODS.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: m,
+										children: m
+									}, m))]
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Garantia (dias)",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									type: "number",
+									value: form.warrantyDays,
+									onChange: (e) => setForm({
+										...form,
+										warrantyDays: e.target.value
+									})
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								label: "Observações",
+								className: "sm:col-span-2",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									value: form.notes,
+									onChange: (e) => setForm({
+										...form,
+										notes: e.target.value
+									})
+								})
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-md)] bg-bg px-4 py-3 text-sm",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							className: "text-muted",
+							children: [
+								"Peças ",
+								formatCurrency(totals.parts),
+								" · Mão de obra ",
+								formatCurrency(totals.labor)
+							]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "font-display text-lg font-semibold tabular-nums",
+							children: formatCurrency(totals.total)
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex justify-end gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "secondary",
+							onClick: () => setOpen(false),
+							children: "Cancelar"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							type: "submit",
+							disabled: busy,
+							children: "Salvar OS"
+						})]
+					})
+				]
+			})
+		})
+	] });
+}
+//#endregion
+export { Page as component };
